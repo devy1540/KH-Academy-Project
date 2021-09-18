@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Panel">
+	
+	<resultMap type="PanelMember" id="panelMemberResultSet">
+		<id property="mno" column="MNO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userPwd" column="USER_PWD"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="userAddress" column="USER_ADDRESS"/>
+		<result property="userPhone" column="USER_PHONE"/>
+		<result property="userEmail" column="USER_EMAIL"/>
+		<result property="userType" column="USER_TYPE"/>
+		<result property="leaveDate" column="LEAVE_DATE"/>
+		<result property="entDate" column="ENT_DATE"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="panelBirthday" column="PANEL_BIRTHDAY"/>
+		<result property="panelGender" column="PANEL_GENDER"/> 
+		<result property="referPanelCode" column="REFER_PANELCODE"/>
+		<result property="nominee" column="NOMINEE"/>
+		<result property="panellevelNo" column="PANELLEVEL_NO"/>
+		<result property="occupationNo" column="OCCUPATION_NO"/>
+		<result property="withdrawAccount" column="WITHDRAW_ACCOUNT"/>
+	</resultMap>
+	
+	<resultMap type="PanelResearch" id="MainResearchResultSet">
+		<id property="researchNo" column="RESEARCH_NO"/>
+		<result property="researchName" column="RESEARCH_NAME"/>
+		<result property="researchPeriod" column="RESEARCH_PERIOD"/>
+		<result property="researchPerpose" column="RESEARCH_PERPOSE"/>
+		<result property="researchReward" column="RESEARCH_REWARD"/>
+	</resultMap>
+	
+	<resultMap type="PanelResearch" id="MyResearchResultSet">
+		<id property="researchNo" column="RESEARCH_NO"/>
+		<result property="researchName" column="RESEARCH_NAME"/>
+		<result property="researchPeriod" column="RESEARCH_PERIOD"/>
+		<result property="researchPerpose" column="RESEARCH_PERPOSE"/>
+		<result property="researchReward" column="RESEARCH_REWARD"/>
+		<result property="researchReward" column="RESEARCH_REWARD"/>
+		<result property="rquestionVideolink" column="RQUESTION_VIDEOLINK"/>
+	</resultMap>
+	
+	<resultMap type="Notice" id="noticeListResultMap">
+	   <id property="noticeNo" column="NOTICE_NO"/>
+	   <result property="noticeTitle" column="NOTICE_TITLE"/>
+	   <result property="noticeContext" column="NOTICE_CONTEXT"/>
+	   <result property="noticeDate" column="NOTICE_DATE"/>
+	   <result property="noticeViewCount" column="NOTICE_VIEWCOUNT"/>
+	   <result property="mno" column="MNO"/>
+	   <result property="noticeStatus" column="NOTICE_STATUS"/>
+	 </resultMap>
+	 
+	<select id="loginCheck" resultMap="panelMemberResultSet" parameterType="PanelMember">
+		SELECT *
+		FROM MEMBER M
+		LEFT JOIN PANEL P ON (M.MNO = P.MNO)
+		WHERE USER_ID = #{userId}
+		AND USER_TYPE != '기업'
+		AND LEAVE_DATE IS NULL
+		AND CERTIFICATION = 'Y'
+	</select>
+	<select id="selectLevelCheck" resultType="_int" parameterType="_int">
+		SELECT PANELLEVEL_NO
+		FROM PANEL
+		WHERE MNO = #{mno}
+	</select>
+	<select id="selectPwd" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT USER_PWD
+		FROM MEMBER
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<insert id="insertMemberTable" parameterType="PanelMember">
+		INSERT INTO MEMBER VALUES
+		(SEQ_MNO.NEXTVAL, #{userId}, #{userPwd}, #{userName}, #{userAddress}, #{userPhone}, #{userEmail}, '패널', NULL, SYSDATE, SYSDATE, 'N', NULL)
+	</insert>
+	<insert id="insertPanelTable" parameterType="PanelMember">
+		INSERT INTO PANEL VALUES
+		(#{mno}, #{panelBirthday}, #{panelGender}, #{referPanelCode}, #{nominee}, 12, NULL, 1)
+	</insert>
+	
+	<select id="selectMno" parameterType="PanelMember" resultType="_int">
+		SELECT MNO FROM MEMBER WHERE USER_ID = #{userId}
+	</select>
+	
+	<insert id="insertTermsPanel" parameterType="PanelMember">
+		INSERT INTO TERMSHISTORY(TERMSHISTORY_NO, MNO, TERMS_NO, TERMS_CONSENT)
+		SELECT SEQ_TERMSHISTORY.NEXTVAL, A.* FROM(
+			 <foreach item="item" index="index" collection="indexArr" separator="UNION ALL " >
+			   SELECT #{mno} AS MNO, #{item.value} AS TERMS_NO, 'Y' AS TERMS_CONSENT
+			   FROM DUAL
+			 </foreach>) A
+	</insert>
+	
+	<update id="updateMemberInfo" parameterType="PanelMember">
+		UPDATE MEMBER SET USER_ADDRESS = #{userAddress}, MODIFY_DATE = SYSDATE
+		WHERE MNO = #{mno}
+	</update>
+	<update id="updatePassword" parameterType="PanelMember">
+		UPDATE MEMBER SET USER_PWD = #{userPwd}, MODIFY_DATE = SYSDATE
+		WHERE MNO = #{mno}
+	</update>
+	
+	 <insert id="insertRewardPanel" parameterType="PanelMember">
+		INSERT INTO PANELREWARD VALUES(0, #{mno})
+	</insert>
+	
+	<insert id="insertTernaryPanel" parameterType="PanelMember">
+		INSERT INTO PANELTERNARY VALUES(#{mno}, 0)
+	</insert>
+  
+  <resultMap type="Reward" id="RewardResultSet">
+		<id property="rewardHistoryNo" column="REWARDHISTORY_NO"/>
+		<result property="afterChangePoint" column="AFTERCHANGE_POINT"/>
+		<result property="changeReason" column="CHANGE_REASON"/>
+		<result property="changeAmount" column="CHANGE_AMOUNT"/>
+		<result property="mno" column="MNO"/>
+		<result property="rewardChangeDate" column="REWARD_CHANGEDATE"/>
+		<result property="researchHistoryNo" column="RESEARCHHISTORY_NO"/>
+		<result property="cashoutHistoryNo" column="CASHOUTHISTORY_NO"/>
+		<result property="sHistoryNo" column="SHISTORY_NO"/>
+		<result property="surveyNo" column="SURVEY_NO"/>
+		<result property="researchName" column="RESEARCH_NAME"/>
+		<result property="surveyTitle" column="SURVEY_TITLE"/>
+	</resultMap>
+	
+	<select id="getListCountRewardSaved" resultType="_int" parameterType="Reward">
+		SELECT COUNT(*) FROM REWARDHISTORY
+		WHERE CHANGE_AMOUNT LIKE '%' || '+' || '%'
+		AND MNO = #{mno}
+	</select>
+	
+	<select id="showMyRewardDetailSaved" resultMap="RewardResultSet" parameterType="Reward">
+		SELECT RW.REWARDHISTORY_NO, RW.AFTERCHANGE_POINT, RW.CHANGE_REASON, RW.CHANGE_AMOUNT, RW.MNO,REWARD_CHANGEDATE,RW.SHISTORY_NO ,R.RESEARCH_NAME,PS.SURVEY_TITLE
+		FROM REWARDHISTORY RW
+		LEFT JOIN SURVEYHISTORY SH ON(RW.SHISTORY_NO = SH.SHISTORY_NO)
+		LEFT JOIN PANELSURVEY PS ON(SH.SURVEY_NO = PS.SURVEY_NO)
+		LEFT JOIN RESEARCH R ON(RW.RESEARCH_NO = R.RESEARCH_NO)
+		WHERE RW.MNO = #{mno}
+		AND CHANGE_AMOUNT LIKE '%' || '+' || '%'
+		ORDER BY REWARD_CHANGEDATE DESC
+	</select>
+	
+	<select id="getListCountRewardUsed" resultType="_int" parameterType="Reward">
+		SELECT COUNT(*)
+		FROM REWARDHISTORY
+		WHERE MNO = #{mno}
+		AND  CHANGE_AMOUNT LIKE '%' || '-' || '%'
+	</select>
+	
+	<select id="showMyRewardDetailUsed" resultMap="RewardResultSet" parameterType="Reward">
+		SELECT *
+		FROM REWARDHISTORY RH
+		LEFT JOIN CASHOUTHISTORY CH ON(CH.CASHOUTHISTORY_NO = RH.CASHOUTHISTORY_NO)
+        LEFT JOIN PANELSURVEY PS ON(RH.SURVEY_NO = PS.SURVEY_NO)
+		WHERE RH.MNO = #{mno}
+		AND RH.CHANGE_AMOUNT LIKE '%' || '-' || '%'
+		ORDER BY REWARD_CHANGEDATE DESC
+	</select>
+	
+	<select id="getPanelReward" resultMap="RewardResultSet" parameterType="_int">
+		SELECT *
+		FROM(SELECT * FROM REWARDHISTORY WHERE MNO =#{mno} ORDER BY REWARD_CHANGEDATE DESC)
+		WHERE ROWNUM =1
+	</select>
+
+	<select id="surveyOutReward" parameterType="Reward" resultType="_int">
+		SELECT COUNT(*)*25
+		FROM REWARDHISTORY
+		WHERE MNO =#{mno}
+		AND SURVEY_NO IS NOT NULL
+	</select>
+	
+	<select id="cashOutReward" parameterType="Reward" resultType="_int">
+		SELECT NVL(SUM(CASHOUT_NO) * 10000, 0)
+		FROM CASHOUTHISTORY 
+		WHERE CASHOUTHISTORY_NO IN
+		(SELECT CASHOUTHISTORY_NO 
+		FROM REWARDHISTORY 
+		WHERE MNO = #{mno} AND CASHOUTHISTORY_NO IS NOT NULL) 
+	</select>
+	
+	<select id="nowMyReward" parameterType="Reward" resultType="_int">
+		SELECT REWARD_POINT
+		FROM PANELREWARD
+		WHERE MNO =#{mno}
+	</select>
+	 	
+	 <update id="updateLeaveMember" parameterType="PanelMember">
+	   UPDATE MEMBER SET LEAVE_DATE = SYSDATE, MODIFY_DATE = SYSDATE, CERTIFICATION = 'N', LEAVE_REASON = #{leaveReason}
+	   WHERE MNO = #{mno}
+	 </update>
+	
+	 <select id="getNoticeListCount" resultType="_int">
+	   SELECT COUNT(*) 
+	   FROM NOTICE
+	   WHERE NOTICE_STATUS='Y'
+	   <include refid="searchNoticeValue"></include>
+	 </select>
+	 	
+	 	
+	 <sql id="searchNoticeValue">
+		<if test="searchValue != null">
+			AND NOTICE_TITLE LIKE '%'|| #{searchValue} ||'%'
+		</if>
+	</sql>
+	 	
+	 <select id="selectNoticeList" resultMap="noticeListResultMap">
+	   SELECT *
+	   FROM NOTICE
+	   WHERE NOTICE_STATUS='Y'
+	   <include refid="searchNoticeValue"></include>
+	   ORDER BY NOTICE_NO DESC
+	 </select>
+	 
+	 <select id="selectMainNoticeList" resultMap="noticeListResultMap" parameterType="Notice">
+	 	SELECT NOTICE_NO, NOTICE_TITLE, NOTICE_DATE FROM NOTICE
+	 	WHERE NOTICE_STATUS='Y'
+	 	ORDER BY NOTICE_NO DESC
+	 </select>
+  	<select id="selectMainResearchList" resultMap="MainResearchResultSet" parameterType="PanelResearch">
+  		SELECT R.RESEARCH_NO, R.RESEARCH_NAME_PANEL AS RESEARCH_NAME, R.RESEARCH_PERIOD, R.RESEARCH_PERPOSE, R.RESEARCH_REWARD
+		FROM RESEARCH R
+        JOIN (SELECT RESEARCH_NO, RESEARCH_STATE_NO, RESEARCH_CHANGEDATE
+		      FROM RSTATUSHISTORY
+		      JOIN (SELECT RESEARCH_NO AS RNO, MAX(RESEARCH_CHANGEDATE) AS CDATE
+		            FROM RSTATUSHISTORY
+		            GROUP BY RESEARCH_NO)
+		      ON (RNO = RESEARCH_NO)
+		      WHERE RESEARCH_CHANGEDATE = CDATE
+		      AND RESEARCH_STATE_NO = 6) RR
+		ON (RR.RESEARCH_NO = R.RESEARCH_NO)
+		WHERE R.RESEARCH_NO NOT IN (1, 2)
+        AND RR.RESEARCH_STATE_NO = 6
+		ORDER BY R.RESEARCH_NO DESC
+  	</select>
+  	<select id="selectTSResearchList" resultMap="MainResearchResultSet" parameterType="PanelResearch">
+  		SELECT RESEARCH_NO, RESEARCH_NAME, RESEARCH_PERIOD, RESEARCH_PERPOSE, RESEARCH_REWARD
+		FROM RESEARCH
+		WHERE RESEARCH_NO = 1
+  	</select>
+  	
+  	<insert id="insertCashOutHistory" parameterType="Reward">
+  		INSERT INTO CASHOUTHISTORY VALUES(SEQ_CASHOUTHISTORY.NEXTVAL,#{cashoutNo},#{mno},SYSDATE,NULL)
+  		<selectKey keyProperty="cashoutHistoryNo" resultType="_int" order="AFTER">
+  			SELECT SEQ_CASHOUTHISTORY.CURRVAL FROM DUAL
+  		</selectKey>
+  	</insert>
+  	
+  	<insert id="insertRewardHistory" parameterType="Reward">
+  		<selectKey keyProperty="afterChangePoint" resultType="_int" order="BEFORE">
+  			SELECT REWARD_POINT-(SELECT CASHOUT_AMOUNT FROM CASHOUT WHERE CASHOUT_NO =#{cashoutNo}) FROM PANELREWARD WHERE MNO=#{mno}
+  		</selectKey>
+  		INSERT INTO REWARDHISTORY VALUES(SEQ_REWARDHISTORY.NEXTVAL, #{afterChangePoint},'캐시 아웃',#{changeAmount},#{mno},SYSDATE, #{cashoutHistoryNo},NULL,NULL,NULL)
+  	</insert>
+  	
+  	<update id="updatePanelReard" parameterType="Reward">
+  		UPDATE PANELREWARD SET REWARD_POINT = #{afterChangePoint} WHERE MNO =#{mno}
+  	</update>
+  	
+  	<resultMap type="Inquiry" id="InquiryResultSet">
+		<id property="inquiryNo" column="INQUIRY_NO"/>
+		<result property="inquiryTitle" column="INQUIRY_TITLE"/>
+		<result property="inquiryContext" column="INQUIRY_CONTEXT"/>
+		<result property="inquiryAnswer" column="INQUIRY_ANSWER"/>
+		<result property="mno" column="MNO"/>
+		<result property="inquiryCategoryNo" column="INQUIRYCATEGORY_NO"/>
+		<result property="inquiryDate" column="INQUIRY_DATE"/>
+		<result property="inquiryAnswerDate" column="INQUIRY_ANSWERDATE"/>
+	</resultMap>
+	
+	
+	<insert id="insertInquiry" parameterType="Inquiry">
+		INSERT INTO INQUIRYHISTORY VALUES(SEQ_INQUIRY.NEXTVAL, #{inquiryTitle}, #{inquiryContext}, NULL, #{mno},#{inquiryCategoryNo},SYSDATE,NULL)
+	</insert>
+	
+	<select id="selectAllMyInquiry" resultMap="InquiryResultSet" parameterType="Inquiry">
+		SELECT INQUIRY_NO, INQUIRY_TITLE, INQUIRY_CONTEXT, INQUIRY_ANSWER, MNO, INQUIRYCATEGORY_NO, INQUIRY_DATE, INQUIRY_ANSWERDATE 
+		FROM INQUIRYHISTORY 
+		WHERE MNO = #{mno}
+		<include refid="searchCategoryInquiry"/>
+		<include refid="InquiryTitleExist"/>
+		ORDER BY INQUIRY_DATE DESC
+	</select>
+	
+	<select id="adminSelectAllMyInquiry" resultMap="InquiryResultSet" parameterType="Inquiry">
+		SELECT INQUIRY_NO, INQUIRY_TITLE, INQUIRY_CONTEXT, INQUIRY_ANSWER, MNO, INQUIRYCATEGORY_NO, INQUIRY_DATE, INQUIRY_ANSWERDATE 
+		FROM INQUIRYHISTORY 
+		<include refid="searchCategoryInquiryAdmin"/>
+		<include refid="InquiryTitleExist"/>
+		ORDER BY INQUIRY_DATE DESC
+	</select>
+	
+	<sql id="searchCategoryInquiry">
+		<if test="inquiryCategoryNo == 1">
+			AND INQUIRYCATEGORY_NO = 1
+		</if>
+		<if test="inquiryCategoryNo == 2">
+			AND INQUIRYCATEGORY_NO = 2
+		</if>
+		<if test="inquiryCategoryNo == 3">
+			AND INQUIRYCATEGORY_NO = 3
+		</if>
+		<if test="inquiryCategoryNo == 4">
+			AND INQUIRYCATEGORY_NO = 4
+		</if>
+	</sql>
+	
+	<sql id="InquiryTitleExist">
+		<if test="inquiryTitle != null">
+			AND INQUIRY_TITLE LIKE '%' || #{inquiryTitle} || '%'
+		</if>
+	</sql>
+	
+	<select id="getListCountInquiry" resultType="_int" parameterType="Inquiry">
+		SELECT COUNT(*) FROM INQUIRYHISTORY
+		WHERE MNO = #{mno} 
+		<include refid="searchCategoryInquiry"/>
+		
+	</select>
+  
+	<select id="adminGetListCountInquiry" resultType="_int" parameterType="Inquiry">
+		SELECT COUNT(*) FROM INQUIRYHISTORY
+		<include refid="searchCategoryInquiryAdmin"/>
+	</select>
+	<sql id="searchCategoryInquiryAdmin">
+		<if test="inquiryCategoryNo == 1">
+			WHERE INQUIRYCATEGORY_NO = 1
+		</if>
+		<if test="inquiryCategoryNo == 2">
+			WHERE INQUIRYCATEGORY_NO = 2
+		</if>
+		<if test="inquiryCategoryNo == 3">
+			WHERE INQUIRYCATEGORY_NO = 3
+		</if>
+		<if test="inquiryCategoryNo == 4">
+			WHERE INQUIRYCATEGORY_NO = 4
+		</if>
+	</sql>
+	
+	<update id="answerInquiry">
+		UPDATE INQUIRYHISTORY SET INQUIRY_ANSWER =#{inquiryAnswer},INQUIRY_ANSWERDATE = SYSDATE WHERE INQUIRY_NO =#{inquiryNo}
+	</update>
+	
+	<update id="deleteAnswerInquiry">
+		UPDATE INQUIRYHISTORY SET INQUIRY_ANSWER = NULL,INQUIRY_ANSWERDATE = NULL WHERE INQUIRY_NO =#{inquiryNo}
+	</update>
+	
+	<resultMap type="Faq" id="FaqResultSet">
+		<id property="faqNo" column="FAQ_NO"/>
+		<result property="faqTitle" column="FAQ_TITLE"/>
+		<result property="faqContext" column="FAQ_CONTEXT"/>
+		<result property="faqStatus" column="FAQ_STATUS"/>
+		<result property="faqCategoryNo" column="FAQCATEGORY_NO"/>
+	</resultMap>
+	
+	<insert id="insertFaq" parameterType="Faq">
+		INSERT INTO FAQ VALUES(SEQ_FAQ.NEXTVAL,#{faqTitle},#{faqContext},'Y',#{faqCategoryNo})
+	</insert>
+	
+	<select id="getListCountFaq" resultType="_int" parameterType="Faq">
+	   SELECT COUNT(*) 
+	   FROM FAQ
+	   WHERE FAQ_STATUS='Y'
+	</select>
+	
+	<select id="selectAllFaq" parameterType="Faq" resultMap="FaqResultSet">
+		SELECT * 
+		FROM FAQ
+		WHERE FAQ_STATUS = 'Y'
+		ORDER BY FAQ_NO DESC
+		<include refid="searchCategoryFaq"/>
+		<include refid="faqTitleExist"/>
+	</select>
+	
+	<sql id="searchCategoryFaq">
+		<if test="faqCategoryNo == 1">
+			AND FAQCATEGORY_NO = 1
+		</if>
+		<if test="faqCategoryNo == 2">
+			AND FAQCATEGORY_NO = 2
+		</if>
+		<if test="faqCategoryNo == 3">
+			AND FAQCATEGORY_NO = 3
+		</if>
+		<if test="faqCategoryNo == 4">
+			AND FAQCATEGORY_NO = 4
+		</if>
+		<if test="faqCategoryNo == 5">
+			AND FAQCATEGORY_NO = 5
+		</if>
+	</sql>
+	
+	<sql id="faqTitleExist">
+		<if test="faqTitle != null">
+			AND FAQ_TITLE LIKE '%' || #{faqTitle} || '%'
+		</if>
+	</sql>
+	
+	<update id="deleteFaq" parameterType="Faq">
+		UPDATE FAQ SET FAQ_STATUS ='N' WHERE FAQ_NO = ${faqNo}
+	</update>
+	<update id="updateFaq" parameterType="Faq">
+		UPDATE FAQ SET FAQ_TITLE = #{faqTitle}, FAQ_CONTEXT = #{faqContext}, FAQCATEGORY_NO = #{faqCategoryNo}
+		WHERE FAQ_NO = #{faqNo}
+  </update>
+
+	<resultMap type="PanelResearchQuestion" id="researchQuestionResultSet">
+		<id property="rquestionNo" column="RQUESTION_NO" />
+		<result property="questionFormNo" column="QUESTION_FORM_NO" />
+		<result property="researchOrder" column="RESEARCH_ORDER" />
+		<result property="rquestionContext" column="RQUESTION_CONTEXT" />
+		<result property="rquestionVideolink" column="RQUESTION_VIDEOLINK" />
+		<result property="mediaExplain" column="MEDIA_EXPLAIN" />
+		<result property="qchangeName" column="CHANGE_NAME" />
+		<result property="correctAnswer" column="CORRECT_ANSWER" />
+	</resultMap>
+	
+	<resultMap type="PanelResearchQuestion" id="targetQuestionResultSet">
+		<id property="rquestionNo" column="DISCRIMINATION_QUESTIONNO" />
+		<result property="researchOrder" column="DISCRIMINATION_QUESTIONORDER" />
+		<result property="rquestionContext" column="DISCRIMINATION_QUESTIONTITLE" />
+		<result property="correctAnswer" column="CORRECT_ANSWER" />
+	</resultMap>
+	
+	<select id="selectTsQuestionList" resultMap="researchQuestionResultSet">
+		SELECT *
+		FROM RESEARCHQUESTION
+		WHERE RESEARCH_NO = 1
+	</select>
+
+
+	<resultMap type="PanelResearchChoice" id="researchChoiceResultSet">
+		<id property="rchoiceNo" column="RCHOICE_NO" />
+		<result property="rquestionNo" column="RQUESTION_NO" />
+		<result property="rchoiceOrder" column="RCHOICE_ORDER" />
+		<result property="rchoiceContext" column="RCHOICE_CONTEXT" />
+		<result property="cchangeName" column="CHANGE_NAME" />
+	</resultMap>
+	
+	<resultMap type="PanelResearchChoice" id="targetChoiceResultSet">
+		<id property="rchoiceNo" column="DISCRIMINATION_CHOICENO" />
+		<result property="rquestionNo" column="DISCRIMINATION_QUESTIONNO" />
+		<result property="rchoiceOrder" column="DISCRIMINATION_CHOICEORDER" />
+		<result property="rchoiceContext" column="DISCRIMINATION_CHOICECONTEXT" />
+	</resultMap>
+
+	<select id="selectTsChoiceList" resultMap="researchChoiceResultSet" parameterType="_int">
+		SELECT *
+		FROM RESEARCHCHOICE
+		WHERE RQUESTION_NO = #{ rquestionNo }
+		ORDER BY RCHOICE_ORDER ASC
+	</select>
+	
+	<select id="selectCountMyResearch" resultType="_int" parameterType="PanelMember">
+		<![CDATA[
+		SELECT COUNT (*)
+		FROM RESEARCH R
+		JOIN RESEARCHTARGET RT USING (RESEARCH_NO)
+		JOIN (SELECT RESEARCH_NO, RESEARCH_STATE_NO, RESEARCH_CHANGEDATE
+		      FROM RSTATUSHISTORY
+		      JOIN (SELECT RESEARCH_NO AS RNO, MAX(RESEARCH_CHANGEDATE) AS CDATE
+		            FROM RSTATUSHISTORY
+		            GROUP BY RESEARCH_NO)
+		      ON (RNO = RESEARCH_NO)
+		      WHERE RESEARCH_CHANGEDATE = CDATE
+		      AND RESEARCH_STATE_NO = 6)
+		USING (RESEARCH_NO)
+		JOIN (SELECT RESEARCH_NO, LISTAGG(RQUESTION_VIDEOLINK || '') WITHIN GROUP (ORDER BY RQUESTION_VIDEOLINK) RQUESTION_VIDEOLINK
+		      FROM RESEARCHQUESTION
+		      GROUP BY RESEARCH_NO)
+		USING (RESEARCH_NO)
+        WHERE RESEARCH_NO NOT IN (SELECT RESEARCH_NO
+                                FROM ATTEMPTPARTICIPANT
+                                WHERE MNO = #{ mno })
+		AND RESEARCH_NO <> 1
+		AND RESEARCH_NO <> 2
+		AND ((TARGET_GENDER = 'A' OR TARGET_GENDER = (SELECT P.PANEL_GENDER
+		                                             FROM MEMBER M
+		                                             JOIN PANEL P USING (MNO)
+		                                             WHERE MNO = #{ mno }))
+        AND (TARGET_AGERANGE = 'all' OR ( SUBSTR(TARGET_AGERANGE, 1, 2) <= (SELECT (EXTRACT(YEAR FROM SYSDATE) - SUBSTR(P.PANEL_BIRTHDAY, 1, 4) +1)
+                                                                            FROM MEMBER M
+                                                                            JOIN PANEL P USING (MNO)
+                                                                            WHERE MNO = #{ mno })
+                                          AND SUBSTR(TARGET_AGERANGE, 4, 2) >= (SELECT (EXTRACT(YEAR FROM SYSDATE) - SUBSTR(P.PANEL_BIRTHDAY, 1, 4) +1)
+                                                                                FROM MEMBER M
+                                                                                JOIN PANEL P USING (MNO)
+                                                                                WHERE MNO = #{ mno })))
+        AND (TARGET_LOCATION = 'all' OR ( TARGET_LOCATION = (SELECT DECODE(RH.RQUESTION_RESPONSE, 1, 'metropolitan', 2, 'metropolitan', 8, 'metropolitan', '')
+                                                             FROM MEMBER M
+                                                             LEFT JOIN RESEARCHHISTORY RH USING (MNO)
+                                                             WHERE MNO = #{ mno }
+                                                             AND RH.RESEARCH_NO = 1
+                                                             AND RH.RQUESTION_NO = 73)
+                                          OR TARGET_LOCATION = (SELECT DECODE(RH.RQUESTION_RESPONSE, 1, 'city', 2, 'city', 3, 'city', 4, 'city', 5, 'city', 6, 'city', 7, 'city', '')
+                                                                FROM MEMBER M
+                                                                LEFT JOIN RESEARCHHISTORY RH USING (MNO)
+                                                                WHERE MNO = #{ mno }
+                                                                AND RH.RESEARCH_NO = 1
+                                                                AND RH.RQUESTION_NO = 73))))
+
+        ORDER BY RESEARCH_NO ASC
+		]]>
+	</select>
+	
+	<select id="selectMyResearchList" resultMap="MyResearchResultSet" parameterType="PanelMember">
+		<![CDATA[
+		SELECT RESEARCH_NO, RESEARCH_NAME_PANEL AS RESEARCH_NAME, RESEARCH_PERIOD, RESEARCH_PERPOSE, RESEARCH_REWARD, RQUESTION_VIDEOLINK
+		FROM RESEARCH R
+		JOIN RESEARCHTARGET RT USING (RESEARCH_NO)
+		JOIN (SELECT RESEARCH_NO, RESEARCH_STATE_NO, RESEARCH_CHANGEDATE
+		      FROM RSTATUSHISTORY
+		      JOIN (SELECT RESEARCH_NO AS RNO, MAX(RESEARCH_CHANGEDATE) AS CDATE
+		            FROM RSTATUSHISTORY
+		            GROUP BY RESEARCH_NO)
+		      ON (RNO = RESEARCH_NO)
+		      WHERE RESEARCH_CHANGEDATE = CDATE
+		      AND RESEARCH_STATE_NO = 6)
+		USING (RESEARCH_NO)
+		JOIN (SELECT RESEARCH_NO, LISTAGG(RQUESTION_VIDEOLINK || '') WITHIN GROUP (ORDER BY RQUESTION_VIDEOLINK) RQUESTION_VIDEOLINK
+		      FROM RESEARCHQUESTION
+		      GROUP BY RESEARCH_NO)
+		USING (RESEARCH_NO)
+        WHERE RESEARCH_NO NOT IN (SELECT RESEARCH_NO
+                                FROM ATTEMPTPARTICIPANT
+                                WHERE MNO = #{ mno })
+		AND RESEARCH_NO <> 1
+		AND RESEARCH_NO <> 2
+		AND ((TARGET_GENDER = 'A' OR TARGET_GENDER = (SELECT P.PANEL_GENDER
+		                                             FROM MEMBER M
+		                                             JOIN PANEL P USING (MNO)
+		                                             WHERE MNO = #{ mno }))
+        AND (TARGET_AGERANGE = 'all' OR ( SUBSTR(TARGET_AGERANGE, 1, 2) <= (SELECT (EXTRACT(YEAR FROM SYSDATE) - SUBSTR(P.PANEL_BIRTHDAY, 1, 4) +1)
+                                                                            FROM MEMBER M
+                                                                            JOIN PANEL P USING (MNO)
+                                                                            WHERE MNO = #{ mno })
+                                          AND SUBSTR(TARGET_AGERANGE, 4, 2) >= (SELECT (EXTRACT(YEAR FROM SYSDATE) - SUBSTR(P.PANEL_BIRTHDAY, 1, 4) +1)
+                                                                                FROM MEMBER M
+                                                                                JOIN PANEL P USING (MNO)
+                                                                                WHERE MNO = #{ mno })))
+        AND (TARGET_LOCATION = 'all' OR ( TARGET_LOCATION = (SELECT DECODE(RH.RQUESTION_RESPONSE, 1, 'metropolitan', 2, 'metropolitan', 8, 'metropolitan', '')
+                                                             FROM MEMBER M
+                                                             LEFT JOIN RESEARCHHISTORY RH USING (MNO)
+                                                             WHERE MNO = #{ mno }
+                                                             AND RH.RESEARCH_NO = 1
+                                                             AND RH.RQUESTION_NO = 73)
+                                          OR TARGET_LOCATION = (SELECT DECODE(RH.RQUESTION_RESPONSE, 1, 'city', 2, 'city', 3, 'city', 4, 'city', 5, 'city', 6, 'city', 7, 'city', '')
+                                                                FROM MEMBER M
+                                                                LEFT JOIN RESEARCHHISTORY RH USING (MNO)
+                                                                WHERE MNO = #{ mno }
+                                                                AND RH.RESEARCH_NO = 1
+                                                                AND RH.RQUESTION_NO = 73))))
+
+        ORDER BY RESEARCH_NO ASC
+		 ]]>
+	</select>
+	
+	<select id="selectResearchQuestionList" resultMap="researchQuestionResultSet" parameterType="java.lang.String">
+		SELECT *
+		FROM RESEARCHQUESTION RQ
+		LEFT JOIN UPLOADFILE USING (RQUESTION_NO)
+		WHERE RQ.RESEARCH_NO = #{ researchNo }
+		ORDER BY RESEARCH_ORDER ASC
+	</select>
+	
+	<select id="selectResearchChoiceList" resultMap="researchChoiceResultSet" parameterType="_int">
+		SELECT *
+		FROM RESEARCHCHOICE RC
+		LEFT JOIN UPLOADFILE USING (RCHOICE_NO)
+		WHERE RC.RQUESTION_NO = #{ rquestionNo }
+		ORDER BY RCHOICE_ORDER ASC
+	</select>
+	
+	<select id="selectResearchInfo" resultMap="MainResearchResultSet" parameterType="java.lang.String">
+		SELECT *
+		FROM RESEARCH
+		WHERE RESEARCH_NO = #{ researchNo }
+	</select>
+	
+	<insert id="writeNotice" parameterType="Notice">
+		INSERT INTO NOTICE VALUES(SEQ_NOTICE_NO.NEXTVAL,#{noticeTitle},#{noticeContext},SYSDATE,0,1,'Y')
+	</insert>
+	
+	<resultMap type="Notice" id="noticeListResultMap2">
+	   <id property="noticeNo" column="NOTICE_NO"/>
+	   <result property="noticeTitle" column="NOTICE_TITLE"/>
+	   <result property="noticeContext" column="NOTICE_CONTEXT"/>
+	   <result property="noticeDateStr" column="NOTICE_DATE"/>
+	   <result property="noticeViewCount" column="NOTICE_VIEWCOUNT"/>
+	   <result property="mno" column="MNO"/>
+	   <result property="noticeStatus" column="NOTICE_STATUS"/>
+	 </resultMap>
+	
+	<select id="selectNotice" parameterType="_int" resultMap="noticeListResultMap2">
+		SELECT NOTICE_NO, NOTICE_TITLE, NOTICE_CONTEXT, TO_CHAR(NOTICE_DATE, 'YYYY-MM-DD') NOTICE_DATE, NOTICE_VIEWCOUNT, MNO, NOTICE_STATUS
+		FROM NOTICE
+		WHERE NOTICE_NO=#{noticeNo}
+	</select>
+	
+	<update id="updateNotice" parameterType="Notice">
+		UPDATE NOTICE SET NOTICE_TITLE=#{noticeTitle},NOTICE_CONTEXT=#{noticeContext},NOTICE_DATE=SYSDATE
+		WHERE NOTICE_NO=#{noticeNo}
+	
+	</update>
+	
+	<update id="noticeDelete" parameterType="_int">
+		UPDATE NOTICE SET NOTICE_STATUS='N'
+		WHERE NOTICE_NO=#{noticeNo}
+	</update>
+	
+	<update id="updateAccount" parameterType="PanelMember">
+		UPDATE PANEL SET 
+		WITHDRAW_ACCOUNT = #{withdrawAccount}
+		WHERE MNO = #{mno}
+	</update>
+  	
+  	<insert id="insertAttemptParticipant" parameterType="AttemptInsert">
+  		INSERT INTO ATTEMPTPARTICIPANT VALUES(SEQ_ATTEMPTPARTICIPANT.NEXTVAL, SYSDATE, #{ mno }, #{ researchNo })
+  	</insert>
+  
+  	<update id="updateNomineeReward" parameterType="java.lang.String">
+  		UPDATE PANELREWARD 
+  		SET REWARD_POINT = (SELECT REWARD_POINT FROM PANELREWARD 
+							WHERE MNO = (SELECT MNO
+										FROM PANEL P 
+										WHERE P.REFER_PANELCODE = #{nominee})) + 100
+		WHERE MNO = (SELECT MNO
+					FROM PANEL P 
+					WHERE P.REFER_PANELCODE = #{nominee})
+  	</update>
+  	
+  	<update id="updateUserReward" parameterType="PanelMember">
+  		UPDATE PANELREWARD 
+  		SET REWARD_POINT = (SELECT REWARD_POINT FROM PANELREWARD 
+							WHERE MNO = #{mno}) + 500
+		WHERE MNO = #{mno}
+	</update>
+	
+	<insert id="insertRewardNomineeHistory" parameterType="java.lang.String">
+		INSERT INTO REWARDHISTORY VALUES
+		(SEQ_REWARDHISTORY.NEXTVAL, (SELECT REWARD_POINT FROM PANELREWARD 
+									WHERE MNO = (SELECT MNO
+												FROM PANEL P 
+												WHERE P.REFER_PANELCODE = #{nominee})), '피추천인', '+100', (SELECT MNO
+																										FROM PANEL P 
+																										WHERE P.REFER_PANELCODE = #{nominee}), 
+		SYSDATE, NULL, NULL, NULL, NULL)
+	</insert>
+	
+	<insert id="insertRewardUserHistory" parameterType="PanelMember">
+		INSERT INTO REWARDHISTORY VALUES
+		(SEQ_REWARDHISTORY.NEXTVAL, (SELECT REWARD_POINT FROM PANELREWARD 
+									WHERE MNO = #{mno}), '추천인', '+500', #{mno}, SYSDATE, NULL, NULL, NULL, NULL)
+	</insert>
+	
+	<select id="getCurrentPanelReward" parameterType="_int" resultType="_int">
+		SELECT REWARD_POINT
+		FROM PANELREWARD
+		WHERE MNO =#{ mno }
+	</select>
+	
+	<update id="updatePanelReward" parameterType="SurveyReward">
+  		UPDATE PANELREWARD 
+  		SET REWARD_POINT = #{ afterchangePoint }
+		WHERE MNO = #{ mno }
+	</update>
+	
+	<insert id="insertSurveyRewardHistory" parameterType="SurveyReward">
+		INSERT INTO REWARDHISTORY VALUES(SEQ_REWARDHISTORY.NEXTVAL, #{ afterchangePoint }, '설문조사참여', '+'||#{ surveyReward }, #{ mno }, SYSDATE, NULL, NULL, NULL, #{ researchNo })
+	</insert>
+	
+	<select id="selectPcQuestion" resultMap="researchQuestionResultSet" parameterType="java.lang.String">
+		SELECT *
+		FROM RESEARCHQUESTION RQ
+		LEFT JOIN UPLOADFILE UF ON (RQ.RESEARCH_NO = UF.RESEARCH_NO)
+		WHERE UF.RESEARCH_NO = 2
+		ORDER BY RESEARCH_ORDER ASC
+	</select>
+	
+	<select id="selectPcChoices" resultMap="researchChoiceResultSet" parameterType="_int">
+		SELECT *
+		FROM RESEARCHCHOICE
+		WHERE RQUESTION_NO = #{ rquestionNo }
+		ORDER BY RCHOICE_ORDER ASC
+	</select>
+	
+	<select id="selectTargetQuestions" resultMap="targetQuestionResultSet" parameterType="java.lang.String">
+		SELECT *
+		FROM DISCRIMINATIONQUESTION
+		WHERE RESEARCH_NO = #{ researchNo }
+        ORDER BY DISCRIMINATION_QUESTIONORDER ASC
+	</select>
+	
+	<select id="selectTargetChoices" resultMap="targetChoiceResultSet" parameterType="_int">
+		SELECT *
+		FROM DISCRIMINATIONCHOICE
+		WHERE DISCRIMINATION_QUESTIONNO = #{ rquestionNo }
+		ORDER BY DISCRIMINATION_CHOICEORDER ASC
+	</select>
+	
+	
+	<select id="selectRquestionNo" parameterType="InsertAnswer" resultType="_int">
+		SELECT RQUESTION_NO
+		FROM RESEARCHQUESTION
+		WHERE RESEARCH_NO = #{ researchNo }
+		AND RESEARCH_ORDER = #{ researchOrder }
+	</select>
+	
+	<insert id="insertAnswer" parameterType="InsertAnswer">
+		INSERT INTO RESEARCHHISTORY VALUES(SEQ_RESEARCHHISTORY.NEXTVAL, #{ researchNo }, #{ mno }, NULL, #{ researchTime }, #{ rquestionNo }, SYSDATE, #{ rquestionResponse })
+	</insert>
+	
+	<select id="selectResearchhistoryNo" parameterType="InsertAnswer" resultType="_int">
+		SELECT MAX(RESEARCHHISTORY_NO)
+		FROM RESEARCHHISTORY
+		WHERE MNO = #{ mno }
+	</select>
+	
+	<insert id="insertDisposalHistory" parameterType="InsertAnswer">
+		INSERT INTO DISPOSALHISTORY VALUES(SEQ_DISPOSALHISTORY.NEXTVAL, #{ researchhistoryNo }, #{ disposalReason })
+	</insert>
+	
+	<insert id="insertNondisposalHistory" parameterType="InsertAnswer">
+		INSERT INTO NONDISPOSALHISTORY VALUES(SEQ_NONDISPOSALHISTORY.NEXTVAL, #{ researchhistoryNo })
+	</insert>
+	
+	<select id="selectCountValidAnswer" parameterType="InsertAnswer" resultType="_int">
+		SELECT COUNT(*)
+		FROM NONDISPOSALHISTORY
+		JOIN RESEARCHHISTORY USING (RESEARCHHISTORY_NO)
+		WHERE RESEARCH_NO = #{ researchNo }
+	</select>
+	
+	<select id="selectResearchEngagementGoals" parameterType="InsertAnswer" resultType="_int">
+		SELECT RESEARCH_ENGAGEMENT_GOALS
+		FROM RESEARCH
+		WHERE RESEARCH_NO = #{ researchNo }
+	</select>
+	
+	<insert id="insertRstatusHistorySeven" parameterType="InsertAnswer">
+		INSERT INTO RSTATUSHISTORY VALUES(SEQ_RSTATUSHISTORY.NEXTVAL, #{ researchNo }, 7, SYSDATE, NULL)
+	</insert>
+	
+	<select id="selectTernaryCount" parameterType="InsertAnswer" resultType="_int">
+		SELECT TERNARY_COUNT
+		FROM PANELTERNARY
+		WHERE MNO = #{ mno }
+	</select>
+	
+	<update id="updateTernaryCount" parameterType="InsertAnswer">
+		UPDATE PANELTERNARY SET TERNARY_COUNT = #{ ternaryCount } WHERE MNO = #{ mno }
+	</update>
+	
+	<insert id="insertTernaryOutHistory" parameterType="InsertAnswer">
+		INSERT INTO TERNARYOUTHISTORY VALUES(SEQ_TERNARYOUTHISTORY.NEXTVAL, #{ ternaryCount }, #{ ternaryReason }, #{ mno } )
+	</insert>
+	
+	<update id="updatePanellevelNoBlack" parameterType="InsertAnswer">
+		UPDATE PANEL SET PANELLEVEL_NO = 6 WHERE MNO = #{ mno }
+	</update>
+	
+  <insert id="uploadSurvey" parameterType="PanelSurvey">
+		INSERT INTO PANELSURVEY VALUES
+		(SEQ_PANELSURVEY.NEXTVAL, #{surveyTitle}, SYSDATE, #{mno}, #{scategoryNo}, #{surveyContext}, 'Y', 0)
+		<selectKey keyProperty="surveyNo" resultType="_int" order="AFTER">
+			SELECT SEQ_PANELSURVEY.CURRVAL FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<insert id="uploadSurveyChoice" parameterType="PanelSurveyChoice">
+		INSERT INTO SURVEYCHOICE VALUES
+		(SEQ_PANELSURVEYCHOICE.NEXTVAL, #{schoiceContext}, #{surveyNo}, #{schoiceOrder})
+		<selectKey keyProperty="schoiceNo" resultType="_int" order="AFTER">
+			SELECT SEQ_PANELSURVEYCHOICE.CURRVAL FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<insert id="uploadSurveyChoiceImage" parameterType="UploadFile">
+		INSERT INTO UPLOADFILE VALUES 
+		(SEQ_UPLOADFILE.NEXTVAL, '패널서베이 보기', #{originName}, #{changeName}, #{filePath}, SYSDATE, 'Y', NULL, #{schoiceNo}, NULL, NULL, NULL, NULL)
+	</insert>
+	
+	<select id="getPanelSurveyList" resultType="_int">
+		SELECT COUNT(*)
+		FROM PANELSURVEY PS
+		JOIN SURVEYCHOICE SC ON (PS.SURVEY_NO = SC.SURVEY_NO)
+	    LEFT JOIN UPLOADFILE UF ON (UF.SCHOICE_NO = SC.SCHOICE_NO)
+	    JOIN MEMBER M ON(M.MNO = PS.MNO)
+	    JOIN SURVEYCATEGORY C ON (C.SCATEGORY_NO = PS.SCATEGORY_NO)
+		WHERE PANELSURVEY_STATUS = 'Y'
+		<include refid="searchSurveyValue"/>
+	    <include refid="searchSurveyCategory"/>
+	</select>
+	
+	<resultMap type="map" id="panelSurveyListMap">
+		<result property="surveyNo" column="SURVEY_NO"/>
+		<result property="surveyTitle" column="SURVEY_TITLE"/>
+		<result property="surveyDate" column="SURVEY_DATE"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="scategoryName" column="SCATEGORY_NAME"/>
+		<result property="surveyContext" column="SURVEY_CONTEXT"/>
+		<result property="replyCount" column="REPLY_COUNT"/>
+		<result property="surveyLike" column="SURVEY_LIKE"/>
+		<collection property="choiceList" column="SURVEY_NO" ofType="PanelSurveyChoice" javaType="java.util.List">
+			<result property="schoiceNo" column="SCHOICE_NO"/>
+			<result property="schoiceContext" column="SCHOICE_CONTEXT"/>
+			<result property="schoiceOrder" column="SCHOICE_ORDER"/>
+			<result property="changeName" column="CHANGE_NAME"/>
+		</collection>
+	</resultMap>
+	
+	<sql id="searchSurveyValue">
+		<if test="searchValue != null">
+			AND SURVEY_TITLE LIKE '%'|| #{searchValue} ||'%'
+		</if>
+	</sql>
+	<sql id="searchSurveyCategory">
+		<if test="interests != 0">
+			AND C.SCATEGORY_NO = #{interests}
+		</if>
+	</sql>
+	<sql id="searchSurveyOrder">
+		<if test="frequency == null">
+			PS.SURVEY_NO DESC, SURVEY_DATE DESC,
+		</if>
+		<if test="frequency == 'recentOrder'">
+			PS.SURVEY_NO DESC, SURVEY_DATE DESC, 
+		</if>
+		<if test="frequency == 'rankingOrder'">
+			SURVEY_LIKE DESC, 
+		</if>
+	</sql>
+	<select id="panelSurveyList" resultMap="panelSurveyListMap">
+		SELECT (SELECT COUNT(*) FROM SURVEYREPLY WHERE SURVEY_NO = PS.SURVEY_NO) REPLY_COUNT, SURVEY_LIKE, PS.SURVEY_NO, PS.SURVEY_TITLE, TO_CHAR(PS.SURVEY_DATE, 'YYYY-MM-DD') SURVEY_DATE, M.USER_NAME, C.SCATEGORY_NAME, PS.SURVEY_CONTEXT, SC.SCHOICE_NO, SC.SURVEY_NO, SC.SCHOICE_CONTEXT, SC.SCHOICE_ORDER, UF.CHANGE_NAME
+	    FROM PANELSURVEY PS
+	    JOIN SURVEYCHOICE SC ON (PS.SURVEY_NO = SC.SURVEY_NO)
+	    LEFT JOIN UPLOADFILE UF ON (UF.SCHOICE_NO = SC.SCHOICE_NO)
+	    JOIN MEMBER M ON(M.MNO = PS.MNO)
+	    JOIN SURVEYCATEGORY C ON (C.SCATEGORY_NO = PS.SCATEGORY_NO)
+	    WHERE PANELSURVEY_STATUS = 'Y'
+	    <include refid="searchSurveyValue"/>
+	    <include refid="searchSurveyCategory"/>
+	    ORDER BY <include refid="searchSurveyOrder"/> SC.SCHOICE_NO ASC
+	</select>
+	
+	<select id="likeCheck" parameterType="_int" resultType="_int">
+		SELECT SURVEY_NO
+		FROM LIKEHISTORY
+		WHERE MNO = #{mno}
+	</select>
+	
+	<update id="minusLikeCount" parameterType="_int">
+		UPDATE PANELSURVEY SET
+		SURVEY_LIKE = (SELECT SURVEY_LIKE FROM PANELSURVEY WHERE SURVEY_NO = #{surveyNo}) - 1
+		WHERE SURVEY_NO = #{surveyNo}
+	</update>
+	
+	<update id="plusLikeCount" parameterType="_int">
+		UPDATE PANELSURVEY SET
+		SURVEY_LIKE = (SELECT SURVEY_LIKE FROM PANELSURVEY WHERE SURVEY_NO = #{surveyNo}) + 1
+		WHERE SURVEY_NO = #{surveyNo}
+	</update>
+	
+	<delete id="deleteLikeHistory" parameterType="PanelSurvey">
+		DELETE FROM LIKEHISTORY
+		WHERE SURVEY_NO = #{surveyNo}
+		AND MNO = #{mno}
+	</delete>
+	
+	<insert id="addLikeHistory" parameterType="PanelSurvey">
+		INSERT INTO LIKEHISTORY VALUES
+		(SEQ_LIKEHISTORY.NEXTVAL, #{surveyNo}, #{mno})
+	</insert>
+	
+	<resultMap type="map" id="statisticMap">
+		<result property="choiceContext" column="SCHOICE_CONTEXT"/>
+		<result property="choiceCount" column="CHOICE_COUNT"/>
+	</resultMap>
+	
+	<select id="statisticList" parameterType="_int" resultMap="statisticMap">
+		SELECT SC.SCHOICE_CONTEXT, COUNT(SC.SCHOICE_CONTEXT) AS CHOICE_COUNT FROM SURVEYHISTORY SH
+		JOIN SURVEYCHOICE SC ON (SC.SCHOICE_NO = SH.SCHOICE_NO)
+		WHERE SH.SURVEY_NO = #{surveyNo}
+		GROUP BY SC.SCHOICE_CONTEXT
+		ORDER BY CHOICE_COUNT DESC
+	</select>
+	
+	<resultMap type="map" id="replyMap">
+		<result property="surveyReplyNo" column="SURVEYREPLY_NO"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="surveyReplyContext" column="SURVEYREPLY_CONTEXT"/>
+		<result property="surveyReplyDate" column="SURVEYREPLY_DATE"/>
+		<result property="surveyReplyRefrid" column="SURVEYREPLY_REFRID"/>
+	</resultMap>
+	
+	<select id="replyList" parameterType="_int" resultMap="replyMap">
+		SELECT SR.SURVEYREPLY_NO, M.USER_NAME, SR.SURVEYREPLY_CONTEXT, TO_CHAR(SR.SURVEYREPLY_DATE + 9 / (24) + 71 / (24 * 60 * 60), 'YYYY-MM-DD "at" HH:MI AM') AS SURVEYREPLY_DATE, SR.SURVEYREPLY_REFRID
+		FROM SURVEYREPLY SR
+		JOIN PANELSURVEY PS ON (PS.SURVEY_NO = SR.SURVEY_NO)
+		JOIN MEMBER M ON(M.MNO = SR.MNO)
+		WHERE SR.SURVEY_NO = #{surveyNo}
+		ORDER BY SR.SURVEYREPLY_DATE ASC
+	</select>
+	
+	<select id="voteCheck" parameterType="Vote" resultType="_int">
+		SELECT COUNT(*)
+		FROM SURVEYHISTORY
+		WHERE SURVEY_NO = #{surveyNo}
+		AND MNO = #{mno}
+	</select>
+	
+	<insert id="voteSurvey" parameterType="Vote">
+		INSERT INTO SURVEYHISTORY VALUES
+		(SEQ_SURVEYHISTORY.NEXTVAL, #{choiceNo}, #{surveyNo}, #{mno}, SYSDATE)
+		<selectKey keyProperty="surveyHistoryNo" resultType="_int" order="AFTER">
+  			SELECT SEQ_SURVEYHISTORY.CURRVAL FROM DUAL
+  		</selectKey>
+	</insert>
+	
+	<update id="insertPanelReward" parameterType="Vote">
+		UPDATE PANELREWARD SET REWARD_POINT = (SELECT REWARD_POINT FROM PANELREWARD WHERE MNO = #{mno})
+		WHERE MNO = #{mno}
+	</update>
+	
+	<insert id="insertPanelSurveyRewardHistory" parameterType="Vote">
+		INSERT INTO REWARDHISTORY VALUES 
+		(SEQ_REWARDHISTORY.NEXTVAL, ((SELECT REWARD_POINT FROM PANELREWARD WHERE MNO = #{mno}) + 1), '패널 서베이', '+1', #{mno}, SYSDATE, NULL, #{surveyHistoryNo}, NULL, NULL)
+	</insert>
+	
+	<insert id="replyUpload" parameterType="SurveyReply">
+		INSERT INTO SURVEYREPLY VALUES
+		(SEQ_SURVEYREPLY.NEXTVAL, #{surveyReplyContext}, SYSDATE, NULL, #{surveyNo}, #{mno})
+		<selectKey keyProperty="surveyReplyNo" resultType="_int" order="AFTER">
+  			SELECT SEQ_SURVEYREPLY.CURRVAL FROM DUAL
+  		</selectKey>
+	</insert>
+	
+	<insert id="rereplyUpload" parameterType="SurveyReply">
+		INSERT INTO SURVEYREPLY VALUES
+		(SEQ_SURVEYREPLY.NEXTVAL, #{surveyReplyContext}, SYSDATE, #{surveyReplyRefRid}, #{surveyNo}, #{mno})
+		<selectKey keyProperty="surveyReplyNo" resultType="_int" order="AFTER">
+  			SELECT SEQ_SURVEYREPLY.CURRVAL FROM DUAL
+  		</selectKey>
+	</insert>
+	
+	<select id="selectPanelInfo" parameterType="InsertAnswer" resultMap="panelMemberResultSet">
+		SELECT *
+		FROM MEMBER
+		JOIN PANEL USING (MNO)
+		WHERE MNO = #{ mno }
+	</select>
+	
+<resultMap id="PanelResearchList" type="PanelResearchList">
+
+<result column="RESEARCH_NO" property="researchNo"/>
+
+<result column="RESEARCH_RESPONSE_DATE" property="researchResponseDate"/>
+
+<result column="ATTEMPT_DATE" property="attemptDate"/>
+
+<result column="RESEARCH_NAME" property="researchName"/>
+
+<result column="MNO" property="mno"/>
+
+</resultMap>
+
+<select id="getListCountPanelResearch" parameterType="PanelResearchList" resultType="_int">
+SELECT NVL(COUNT(DISTINCT RH.RESEARCH_NO), 0) FROM RESEARCHHISTORY RH
+LEFT JOIN RESEARCH R ON (RH.RESEARCH_NO = R.RESEARCH_NO)WHERE RH.MNO = #{mno} 
+</select>
+
+<select id="selectAllPanelResearchList" parameterType="PanelResearchList" resultMap="PanelResearchList">
+SELECT RH.RESEARCH_NO, MAX(RH.RESEARCH_RESPONSE_DATE) AS RESEARCH_RESPONSE_DATE,R.RESEARCH_NAME FROM RESEARCHHISTORY RH
+LEFT JOIN RESEARCH R ON (RH.RESEARCH_NO = R.RESEARCH_NO) WHERE RH.MNO = #{mno}
+GROUP BY RH.RESEARCH_NO, R.RESEARCH_NAME
+ORDER BY 2 DESC 
+</select>
+
+<select id="getListCountPanelResearchRetry" parameterType="PanelResearchList" resultType="_int">
+SELECT NVL(COUNT(*),0) FROM ATTEMPTPARTICIPANT
+WHERE MNO =#{mno} AND RESEARCH_NO NOT IN(SELECT RESEARCH_NO FROM RESEARCHHISTORY WHERE MNO=#{mno}) 
+</select>
+
+<select id="selectAllPanelResearchRetryList" parameterType="PanelResearchList" resultMap="PanelResearchList">
+SELECT AT.RESEARCH_NO, R.RESEARCH_NAME, AT.ATTEMPT_DATE FROM ATTEMPTPARTICIPANT AT
+LEFT JOIN RESEARCH R ON (AT.RESEARCH_NO = R.RESEARCH_NO)WHERE AT.MNO =#{mno} AND AT.RESEARCH_NO NOT IN(SELECT RESEARCH_NO FROM RESEARCHHISTORY WHERE MNO=#{mno})ORDER BY 3 DESC
+ </select>
+	
+	
+</mapper>
+
+
+
+

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.9.11.201912160804-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+	</configs>
+	<autoconfigs>
+		<config>src/main/webapp/WEB-INF/config/memberManagement-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/member-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/spring-security.xml</config>
+		<config>src/main/resources/root-context.xml</config>
+		<config>src/main/webapp/WEB-INF/config/websocket-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/admin-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/panel-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/customerCenter-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/rewardManagement-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/config/corp-servlet.xml</config>
+	</autoconfigs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

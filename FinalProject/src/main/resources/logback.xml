@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<!-- <configuration debug="true" scan="true" scanPeriod="1 seconds"> -->
+<configuration debug="true">
+   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+         <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger.%method\(%line\) === %msg%n</pattern>
+      </encoder>
+   </appender>
+
+   <logger name="org.springframework" level="INFO" />
+   <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="DEBUG" />
+   <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="WARN" />
+
+   <root level="ALL">
+      <appender-ref ref="STDOUT" />
+   </root>
+
+</configuration>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Member">
+	<select id="duplicationIdCheck" resultType="_int" parameterType="string">
+		SELECT COUNT(*) FROM MEMBER WHERE USER_ID = #{userId}
+	</select>
+	<select id="duplicationEmailCheck" resultType="_int" parameterType="string">
+		SELECT COUNT(*) FROM MEMBER WHERE USER_EMAIL = #{userEmail}
+	</select>
+	<update id="certification" parameterType="string">
+		UPDATE MEMBER SET CERTIFICATION = 'Y' WHERE USER_ID = #{userId}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
