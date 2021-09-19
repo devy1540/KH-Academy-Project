@@ -10,4 +10,7 @@
 /target/
 /logs/
 .idea/
+
 *.iml
+*.clsspath
+*.project
