@@ -1,0 +1,69 @@
+@charset "UTF-8";
+
+.headerTableArea {
+	width: 60%;
+	height: inherit;
+}
+
+.headerLogoArea {
+	text-align: left;
+	vertical-align: bottom;
+	width: 33%;
+}
+
+.smallLogoArea {
+	text-align: center;
+	vertical-align: center;
+	width: 33%;
+}
+
+.headerLoginArea {
+	text-align: right;
+	vertical-align: bottom;
+	width: 33%;
+	padding-bottom: 1%;
+}
+
+.headerLoginArea a, .headerLoginArea a:hover  {
+	color: white;
+	text-decoration: none;
+}
+
+.navArea {
+	height: 43px;
+	background-color: #008499;
+}
+.navContainer {
+	margin-left: auto;
+	margin-right: auto;
+	height: 100%;
+	width: 60%;
+}
+
+#nav {
+	background-color: #008499;
+	height: inherit;
+	min-height: 30px;
+}
+.ui.menu>.item:first-child {
+	border-radius: 0;
+}
+
+#logoImg {
+	width: 100px;
+	margin-bottom: 1.2%;
+}
+
+#logo2Img {
+	height: 35px;
+	width: 35px;
+}
+.ui.menu.dropdown.item.menu {{
+	top: 109%; 
+}
+.ui.menu.four.item.item {
+    margin-top: 5px; 
+}
+.surveyMenu {
+	size:inherit;
+}

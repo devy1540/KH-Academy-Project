@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:root-context.xml
+					/WEB-INF/config/spring-security.xml</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Processes application requests -->
+	<!-- 웹소켓 서블릿 연결 -->
+ 	<servlet>
+		<servlet-name>websocketServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/websocket-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>websocketServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Admin 서블릿 연결 -->
+	<servlet>
+		<servlet-name>adminServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/admin-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>adminServlet</servlet-name>
+		<url-pattern>*.admin</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Corp 서블릿 연결 -->
+	<servlet>
+		<servlet-name>corpServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/corp-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>corpServlet</servlet-name>
+		<url-pattern>*.corp</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Panel 서블릿 연결 -->
+	<servlet>
+		<servlet-name>panelServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/panel-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>panelServlet</servlet-name>
+		<url-pattern>*.panel</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Member 서블릿 연결 -->
+	<servlet>
+		<servlet-name>memberServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/member-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>memberServlet</servlet-name>
+		<url-pattern>*.me</url-pattern>
+	</servlet-mapping>
+	
+	<!-- customerCenter 서블릿 연결 -->
+	<servlet>
+		<servlet-name>customerCenterServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/customerCenter-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+ 
+  <servlet-mapping>
+		<servlet-name>customerCenterServlet</servlet-name>
+		<url-pattern>*.customerCenter</url-pattern>
+	</servlet-mapping>
+
+	<!-- MemberMangement 서블릿 연결 -->
+	<servlet>
+		<servlet-name>memberManagementServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/memberManagement-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>memberManagementServlet</servlet-name>
+		<url-pattern>*.memberManagement</url-pattern>
+	</servlet-mapping>
+	
+	<!-- rewardManagement 서블릿 연결 -->
+	<servlet>
+		<servlet-name>rewardManagementServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/rewardManagement-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>rewardManagementServlet</servlet-name>
+		<url-pattern>*.reward</url-pattern>
+	</servlet-mapping>
+	
+	<!-- rewardHistory 서블릿 연결 -->
+	<servlet>
+		<servlet-name>rewardHistoryServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/rewardHistory-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>rewardHistoryServlet</servlet-name>
+		<url-pattern>*.myPage</url-pattern>
+	</servlet-mapping>
+
+	<!-- corpResearch 서블릿 연결 -->
+	<servlet>
+		<servlet-name>corpResearchServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/corpResearch-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>corpResearchServlet</servlet-name>
+		<url-pattern>*.corpResearch</url-pattern>
+	</servlet-mapping>'
+  
+	<!-- survey 서블릿 연결 -->
+	<servlet>
+		<servlet-name>surveyServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/survey-servlet.xml</param-value>
+      </init-param>
+	</servlet>
+  	
+	<servlet-mapping>
+		<servlet-name>surveyServlet</servlet-name>
+		<url-pattern>*.survey</url-pattern>
+	</servlet-mapping>
+  
+  <!-- adminResearch 서블릿 연결 -->
+	<servlet>
+		<servlet-name>adminResearchServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/adminResearch-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>adminResearchServlet</servlet-name>
+		<url-pattern>*.adminResearch</url-pattern>
+	</servlet-mapping>
+  
+  <!-- 인코딩 필터 -->
+  	<filter>
+  		<filter-name>encodingFilter</filter-name>
+  		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+  		<init-param>
+  			<param-name>encoding</param-name>
+  			<param-value>UTF-8</param-value>
+  		</init-param>
+  		
+  		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+  	</filter>
+  	
+  	<filter-mapping>
+  		<filter-name>encodingFilter</filter-name>
+  		<url-pattern>/*</url-pattern>
+  	</filter-mapping>
+	
+</web-app>
