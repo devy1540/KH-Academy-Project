@@ -12,5 +12,5 @@
 .idea/
 
 *.iml
-.clsspath
+.classpath
 .project
