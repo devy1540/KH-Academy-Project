@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FinalProject/FinalProject.iml" filepath="$PROJECT_DIR$/FinalProject/FinalProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/KH-Academy-Project.iml" filepath="$PROJECT_DIR$/.idea/KH-Academy-Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MiniProject/MiniProject.iml" filepath="$PROJECT_DIR$/MiniProject/MiniProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SemiProject/SemiProject.iml" filepath="$PROJECT_DIR$/SemiProject/SemiProject.iml" />
     </modules>
   </component>
 </project>
